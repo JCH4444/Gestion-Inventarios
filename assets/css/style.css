@@ -1,0 +1,188 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Botones */
+.btn-primary {
+  background: #3b82f6;
+  color: #fff;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 4%;
+  margin-bottom: 2%;
+}
+.btn-logout {
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 0.3em 0.8em;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* Login */
+.login-page {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: #f0f4f8;
+}
+.login-container {
+  background: #fff;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  text-align: center;
+}
+.login-container h1 {
+  margin-bottom: 1em;
+}
+.login-container label {
+  display: block;
+  text-align: left;
+  margin: 0.5em 0 0.2em;
+}
+.login-container input {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Registro */
+.register{
+  text-decoration: none;
+
+}/* Grupo checkbox en registro */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  margin: 1em 0;
+  font-size: .9rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+}
+
+.checkbox-group a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+.checkbox-group a:hover {
+  text-decoration: underline;
+}
+
+
+/* Dashboard */
+.dashboard-page {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 220px;
+  background: #1f2937;
+  color: #fff;
+  padding: 1.5em 1em;
+}
+.sidebar .brand {
+  font-size: 1.4rem;
+  margin-bottom: 1em;
+  text-align: center;
+}
+.sidebar nav ul {
+  list-style: none;
+}
+.sidebar nav li {
+  margin: 0.8em 0;
+}
+.sidebar nav a {
+  color: #d1d5db;
+  text-decoration: none;
+  font-size: 1rem;
+  display: block;
+  padding: 0.4em;
+  border-radius: 4px;
+}
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  background: #374151;
+  color: #fff;
+}
+
+.main-content {
+  flex: 1;
+  background: #f9fafb;
+  padding: 1.5em;
+}
+.main-content header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+.content {
+  background: #fff;
+  padding: 1.5em;
+  border-radius: 8px;
+}
+
+/* Tablas */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.6em;
+  text-align: left;
+}
+.table th {
+  background: #f3f4f6;
+}
+
+/*Agregar Productos*/
+/* Agregar Productos */
+.form-card {
+    width: 80%;
+    max-width: 500px;
+    margin: 0;
+    padding: 1em;
+}
+
+/* Aplica a todos los campos del formulario de productos y proveedores */
+.form-card .form-data {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 0.7em;
+    font-size: 0.95rem;
+}
+
+#asterico {
+    color: red;
+}
+
+
+/* Formularios (proveedores.) */
+
+.form-card label {
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.2em;
+    color: #111;
+}
+
+
