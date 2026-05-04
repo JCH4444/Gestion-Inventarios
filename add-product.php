@@ -1,5 +1,15 @@
 <?php
-require __DIR__ . '/db.php'; // Usa la misma conexión PDO que en register.php.[file:4][file:5]
+session_start();
+require __DIR__ . '/db.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Database\ProductRepository;
+use App\Validators\ProductValidator;
+
+if (!isset($_SESSION['documento_empleado'])) {
+    header('Location: ' . base_url('login.php'));
+    exit;
+}
 
 $mensaje = '';
 $ok = '';
@@ -13,52 +23,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stock_minimo       = $_POST['stock_minimo']       ?? '';
     $estado_producto    = $_POST['estado_producto']    ?? 'ACTIVO';
 
-    // Validación básica
-    if (
-        $codigo_barras === '' ||
-        $nombre_producto === '' ||
-        $costo_unitario === '' ||
-        $cantidad_inicial === '' ||
-        $stock_minimo === ''
-    ) {
-        $mensaje = 'Todos los campos con * son obligatorios.';
+    // Usar el validador
+    $errors = ProductValidator::validateProductInput(
+        $codigo_barras,
+        $nombre_producto,
+        $costo_unitario,
+        $cantidad_inicial,
+        $stock_minimo,
+        $descripcion_producto !== '' ? $descripcion_producto : null,
+        $estado_producto
+    );
+
+    if (!empty($errors)) {
+        $mensaje = $errors[0];
     } else {
         try {
-            // Verificar si ya existe un producto con ese código de barras
-            $stmt = $pdo->prepare(
-                'SELECT 1 FROM producto WHERE codigo_barras = ?'
-            );
-            $stmt->execute([$codigo_barras]);
+            $productRepo = new ProductRepository($pdo);
 
-            if ($stmt->fetch()) {
+            // Verificar si ya existe
+            if ($productRepo->existsByBarcode($codigo_barras)) {
                 $mensaje = 'Ya existe un producto con ese código de barras.';
             } else {
-                // Insertar el nuevo producto
-                $ins = $pdo->prepare(
-                    'INSERT INTO producto
-                    (codigo_barras, nombre_producto, descripcion_producto, 
-                    costo_unitario, cantidad_inicial, stock_minimo, estado_producto)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)'
-                );
-
-                $descripcion_param = $descripcion_producto !== '' ? $descripcion_producto : null;
-
-                if ($ins->execute([
+                // Crear el producto
+                if ($productRepo->create(
                     $codigo_barras,
                     $nombre_producto,
-                    $descripcion_param,
-                    $costo_unitario,
-                    $cantidad_inicial,
-                    $stock_minimo,
+                    $descripcion_producto !== '' ? $descripcion_producto : null,
+                    (float)$costo_unitario,
+                    (int)$cantidad_inicial,
+                    (int)$stock_minimo,
                     $estado_producto
-                ])) {
+                )) {
                     $ok = 'Producto registrado correctamente.';
                     // Limpiar valores del formulario
                     $codigo_barras = $nombre_producto = $descripcion_producto =
                     $costo_unitario = $cantidad_inicial = $stock_minimo = '';
                 } else {
-                    $errorInfo = $ins->errorInfo();
-                    $mensaje = 'Error al insertar el producto: ' . $errorInfo[2];
+                    $mensaje = 'Error al insertar el producto.';
                 }
             }
         } catch (PDOException $e) {
@@ -92,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="main-content">
         <header>
             <h1>Agregar Nuevo Producto</h1>
-            <a href="index.php">
+            <a href="logout.php">
                 <button class="btn-logout">Cerrar Sesión</button>
             </a>
         </header>
@@ -114,21 +115,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 border-radius:8px;border:1px solid #c3e6cb;
                                 font-size:14px;text-align:center;">
                         <?php echo htmlspecialchars($ok); ?>
-            </div>
+                    </div>
                 <?php endif; ?>
 
                 <form class="form-card" method="POST" action="">
                     <label for="codigo_barras">Código de barras </label><label id="asterico">*</label>
                     <input class="form-data" type="text" id="codigo_barras" name="codigo_barras"
                         value="<?php echo htmlspecialchars($codigo_barras ?? ''); ?>"
-                        required
-                    >
+                        required>
 
                     <label for="nombre_producto">Nombre del producto </label><label id="asterico">*</label>
                     <input class="form-data" type="text" id="nombre_producto" name="nombre_producto"
                         value="<?php echo htmlspecialchars($nombre_producto ?? ''); ?>"
-                        required
-                    >
+                        required>
 
                     <label for="descripcion_producto">Descripción</label>
                     <textarea class="form-data" id="descripcion_producto" name="descripcion_producto" rows="3"
@@ -137,25 +136,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="costo_unitario">Costo unitario </label><label id="asterico">*</label>
                     <input class="form-data" type="number" step="0.01" min="0" id="costo_unitario" name="costo_unitario"
                         value="<?php echo htmlspecialchars($costo_unitario ?? ''); ?>"
-                        required
-                    >
+                        required>
 
                     <label for="cantidad_inicial">Cantidad inicial </label><label id="asterico">*</label>
                     <input class="form-data" type="number" min="0" id="cantidad_inicial" name="cantidad_inicial"
                         value="<?php echo htmlspecialchars($cantidad_inicial ?? ''); ?>"
-                        required
-                    >
+                        required>
 
                     <label for="stock_minimo">Stock mínimo </label><label id="asterico">*</label>
                     <input class="form-data" type="number" min="0"
                         id="stock_minimo" name="stock_minimo"
                         value="<?php echo htmlspecialchars($stock_minimo ?? ''); ?>"
-                        required
-                    >
+                        required>
 
                     <label for="estado_producto">Estado</label>
-                    <select class="form-data" id="estado_producto" name="estado_producto"
-                    >
+                    <select class="form-data" id="estado_producto" name="estado_producto">
                         <option value="ACTIVO"   <?php echo ($estado_producto ?? '') === 'ACTIVO'   ? 'selected' : ''; ?>>ACTIVO</option>
                         <option value="INACTIVO" <?php echo ($estado_producto ?? '') === 'INACTIVO' ? 'selected' : ''; ?>>INACTIVO</option>
                     </select>

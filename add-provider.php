@@ -1,10 +1,14 @@
 <?php
 session_start();
 require __DIR__ . '/db.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Database\ProviderRepository;
+use App\Validators\ProviderValidator;
 
 // Proteger la página (igual que dashboard/add-product).
 if (!isset($_SESSION['documento_empleado'])) {
-    header('Location: ' . baseurl('login.php'));
+    header('Location: ' . base_url('login.php'));
     exit;
 }
 
@@ -24,46 +28,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telefono_proveedor = trim($_POST['telefono_proveedor'] ?? '');
     $estado_proveedor   = $_POST['estado_proveedor']        ?? 'ACTIVO';
 
-    // Validación básica
-    if ($empresa === '' || $representante === '' || $correo_proveedor === '') {
-        $mensaje = 'Empresa, representante y correo son obligatorios.';
+    // Usar el validador
+    $errors = ProviderValidator::validateProviderInput(
+        $empresa,
+        $representante,
+        $correo_proveedor,
+        $telefono_proveedor !== '' ? $telefono_proveedor : null,
+        $estado_proveedor
+    );
+
+    if (!empty($errors)) {
+        $mensaje = $errors[0];
     } else {
-        // Normalizar estado
-        if (!in_array($estado_proveedor, ['ACTIVO', 'INACTIVO'], true)) {
-            $estado_proveedor = 'ACTIVO';
-        }
-
         try {
-            // Verificar correo único (la tabla tiene unique en correo_proveedor).
-            $stmt = $pdo->prepare('SELECT 1 FROM proveedor WHERE correo_proveedor = ?');
-            $stmt->execute([$correo_proveedor]);
+            $providerRepo = new ProviderRepository($pdo);
 
-            if ($stmt->fetch()) {
+            // Verificar si ya existe
+            if ($providerRepo->existsByEmail($correo_proveedor)) {
                 $mensaje = 'Ya existe un proveedor con ese correo.';
             } else {
-                // Insertar proveedor (id_proveedor es AUTO_INCREMENT, no se envía).
-                $ins = $pdo->prepare(
-                    'INSERT INTO proveedor
-                        (empresa, representante, correo_proveedor, telefono_proveedor, estado_proveedor)
-                    VALUES (?, ?, ?, ?, ?)'
-                );
-
+                // Crear el proveedor
                 $telParam = $telefono_proveedor !== '' ? $telefono_proveedor : null;
 
-                if ($ins->execute([
+                if ($providerRepo->create(
                     $empresa,
                     $representante,
                     $correo_proveedor,
                     $telParam,
                     $estado_proveedor
-                ])) {
+                )) {
                     $ok = 'Proveedor registrado correctamente.';
                     // Limpiar campos
                     $empresa = $representante = $correo_proveedor = $telefono_proveedor = '';
                     $estado_proveedor = 'ACTIVO';
                 } else {
-                    $errorInfo = $ins->errorInfo();
-                    $mensaje = 'Error al insertar el proveedor: ' . $errorInfo[2];
+                    $mensaje = 'Error al insertar el proveedor.';
                 }
             }
         } catch (PDOException $e) {

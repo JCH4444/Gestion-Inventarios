@@ -1,30 +1,41 @@
 <?php
 session_start();
 require __DIR__ . '/db.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Auth\PasswordHandler;
+use App\Database\EmployeeRepository;
 
 $mensaje = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $email = trim($_POST['correo_empleado'] ?? '');
   $password = $_POST['contra_empleado'] ?? '';
 
-  if ($email === '' || $password === '') {
-    $mensaje = 'Ingrese email y contraseña.';
+  // Usar el nuevo validador
+  $errors = \App\Validators\AuthValidator::validateLoginInput($email, $password);
+  
+  if (!empty($errors)) {
+    $mensaje = $errors[0];
   } else {
-    $stmt = $pdo->prepare("SELECT * FROM empleado WHERE correo_empleado = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
+    try {
+      // Usar el repositorio
+      $employeeRepo = new EmployeeRepository($pdo);
+      $user = $employeeRepo->findByEmail($email);
 
-    if ($user && password_verify($password, $user['contra_empleado'])) {
-      session_regenerate_id(true); //Elimina id de sesión anterior y crea uno nuevo
-      $_SESSION['documento_empleado'] = $user['documento_empleado'];
-      $_SESSION['nombre'] = $user['nombres_empleado'];
-      $_SESSION['apellidos'] = $user['apellidos_empleado'];
-      //$_SESSION['tipo_usu'] = $user['tipo_usu'];
+      // Usar el password handler
+      if ($user && PasswordHandler::verify($password, $user['contra_empleado'])) {
+        session_regenerate_id(true);
+        $_SESSION['documento_empleado'] = $user['documento_empleado'];
+        $_SESSION['nombre'] = $user['nombres_empleado'];
+        $_SESSION['apellidos'] = $user['apellidos_empleado'];
 
-      header('Location: ' . base_url('dashboard.php'));
-      exit;
-    } else {
-      $mensaje = 'Credenciales inválidas.';
+        header('Location: ' . base_url('dashboard.php'));
+        exit;
+      } else {
+        $mensaje = 'Credenciales inválidas.';
+      }
+    } catch (PDOException $e) {
+      $mensaje = 'Error de base de datos: ' . $e->getMessage();
     }
   }
 }
@@ -43,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1>Iniciar Sesión</h1>
 
     <?php if (!empty($mensaje)): ?>
-      <div style="background-color: #f8d7da; color: #721c24; padding: 12px 16px; margin-bottom: 20px; border-radius:  8px; border: 1px solid #f5c6cb; font-size: 14px; text-align: center;">
+      <div style="background-color: #f8d7da; color: #721c24; padding: 12px 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #f5c6cb; font-size: 14px; text-align: center;">
         <?= htmlspecialchars($mensaje) ?></div>
     <?php endif; ?>
 

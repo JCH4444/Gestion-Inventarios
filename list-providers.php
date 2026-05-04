@@ -1,9 +1,12 @@
 <?php
 session_start();
 require __DIR__ . '/db.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Database\ProviderRepository;
 
 if (!isset($_SESSION['documento_empleado'])) {
-    header('Location: ' . baseurl('login.php'));
+    header('Location: ' . base_url('login.php'));
     exit;
 }
 
@@ -11,17 +14,8 @@ $proveedores = [];
 $error = '';
 
 try {
-    $stmt = $pdo->query(
-        'SELECT id_proveedor,
-                empresa,
-                representante,
-                correo_proveedor,
-                telefono_proveedor,
-                estado_proveedor
-        FROM proveedor
-        ORDER BY empresa'
-    );
-    $proveedores = $stmt->fetchAll();
+    $providerRepo = new ProviderRepository($pdo);
+    $proveedores = $providerRepo->findAll();
 } catch (PDOException $e) {
     $error = 'Error al obtener los proveedores: ' . $e->getMessage();
 }

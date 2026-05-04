@@ -1,10 +1,13 @@
 <?php
 session_start();
-require __DIR__ . '/db.php'; // Conexión PDO.
+require __DIR__ . '/db.php';
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Database\ProductRepository;
 
 // Proteger la página.
 if (!isset($_SESSION['documento_empleado'])) {
-    header('Location: ' . baseurl('login.php'));
+    header('Location: ' . base_url('login.php'));
     exit;
 }
 
@@ -15,19 +18,8 @@ $error = '';
 
 // --- CONSULTA ---
 try {
-    $stmt = $pdo->query(
-        'SELECT codigo_barras,
-                nombre_producto,
-                descripcion_producto,
-                costo_unitario,
-                cantidad_inicial,
-                stock_minimo,
-                fecha_registro_producto,
-                estado_producto
-        FROM producto
-        ORDER BY nombre_producto'
-    );
-    $productos = $stmt->fetchAll();
+    $productRepo = new ProductRepository($pdo);
+    $productos = $productRepo->findAll();
 } catch (PDOException $e) {
     $error = 'Error al obtener los productos: ' . $e->getMessage();
 }
