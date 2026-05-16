@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form class="form-card" method="POST" action="">
-                <label for="empresa">Empresa *</label>
+                <label for="empresa">Empresa </label><label id="asterico">*</label>
                 <input
                     class="form-data"
                     type="text"
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     required
                 >
 
-                <label for="representante">Representante *</label>
+                <label for="representante">Representante </label><label id="asterico">*</label>
                 <input
                     class="form-data"
                     type="text"
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     required
                 >
 
-                <label for="correo_proveedor">Correo proveedor *</label>
+                <label for="correo_proveedor">Correo proveedor </label><label id="asterico">*</label>
                 <input
                     class="form-data"
                     type="email"
