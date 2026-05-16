@@ -65,6 +65,7 @@ try {
                 </div>
             <?php endif; ?>
 
+            <div class="table-container">
             <table class="table">
                 <thead>
                     <tr>
@@ -76,11 +77,12 @@ try {
                         <th>Stock mínimo</th>
                         <th>Fecha registro</th>
                         <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                     <tbody>
                         <?php if (empty($productos)): ?>
                             <tr>
-                                <td colspan="8" style="text-align:center;">
+                                <td colspan="9" style="text-align:center;">
                                     No hay productos registrados.
                                 </td>
                             </tr>
@@ -95,12 +97,23 @@ try {
                                         <td><?php echo htmlspecialchars($p['stock_minimo']); ?></td>
                                         <td><?php echo htmlspecialchars($p['fecha_registro_producto']); ?></td>
                                         <td><?php echo htmlspecialchars($p['estado_producto']); ?></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="edit-product.php?codigo_barras=<?php echo urlencode($p['codigo_barras']); ?>" style="text-decoration: none;">
+                                                    <button class="btn-info">✏️ Editar</button>
+                                                </a>
+                                                <a href="delete-product.php?codigo_barras=<?php echo urlencode($p['codigo_barras']); ?>" style="text-decoration: none;">
+                                                    <button class="btn-danger">🗑️ Eliminar</button>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
                 </thead>
             </table>
+            </div>
         </section>
     </main>
 </body>

@@ -99,4 +99,13 @@ class ProviderRepository
             $id_proveedor
         ]);
     }
+
+    /**
+     * Elimina un proveedor por ID
+     */
+    public function delete(int $id_proveedor): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM proveedor WHERE id_proveedor = ?");
+        return $stmt->execute([$id_proveedor]);
+    }
 }

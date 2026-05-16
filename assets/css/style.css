@@ -348,17 +348,48 @@ body {
 /* ============================================
    TABLAS
    ============================================ */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  border-radius: 8px;
-  overflow: hidden;
+  table-layout: auto;
 }
 
 .table thead {
   background: #F0F8FC;
   border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .table th {
@@ -368,15 +399,49 @@ body {
   color: var(--primary);
   font-size: 0.9rem;
   border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .table td {
   padding: 12px 15px;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .table tbody tr:hover {
   background: #F8FBFD;
+}
+
+/* Columnas específicas */
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  max-width: 250px;
+}
+
+.table th:last-child,
+.table td:last-child {
+  min-width: 150px;
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.table-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+.table-actions .btn-info,
+.table-actions .btn-danger {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ============================================

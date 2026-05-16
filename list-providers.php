@@ -58,6 +58,7 @@ try {
                 </div>
             <?php endif; ?>
 
+            <div class="table-container">
             <table class="table">
                 <thead>
                     <tr>
@@ -67,12 +68,13 @@ try {
                         <th>Correo</th>
                         <th>Teléfono</th>
                         <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($proveedores)): ?>
                         <tr>
-                            <td colspan="6" style="text-align:center;">
+                            <td colspan="7" style="text-align:center;">
                                 No hay proveedores registrados.
                             </td>
                         </tr>
@@ -85,11 +87,22 @@ try {
                                 <td><?php echo htmlspecialchars($prov['correo_proveedor']); ?></td>
                                 <td><?php echo htmlspecialchars($prov['telefono_proveedor'] ?? ''); ?></td>
                                 <td><?php echo htmlspecialchars($prov['estado_proveedor']); ?></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit-provider.php?id=<?php echo urlencode($prov['id_proveedor']); ?>" style="text-decoration: none;">
+                                            <button class="btn-info">✏️ Editar</button>
+                                        </a>
+                                        <a href="delete-provider.php?id=<?php echo urlencode($prov['id_proveedor']); ?>" style="text-decoration: none;">
+                                            <button class="btn-danger">🗑️ Eliminar</button>
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
             </table>
+            </div>
         </section>
     </main>
 </body>

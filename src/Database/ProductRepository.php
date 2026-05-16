@@ -92,4 +92,13 @@ class ProductRepository
             $codigo_barras
         ]);
     }
+
+    /**
+     * Elimina un producto por código de barras
+     */
+    public function delete(string $codigo_barras): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM producto WHERE codigo_barras = ?");
+        return $stmt->execute([$codigo_barras]);
+    }
 }
