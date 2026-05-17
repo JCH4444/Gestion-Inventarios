@@ -59,7 +59,7 @@ body {
 }
 
 .login-container label {
-  display: block;
+  display: inline;
   margin: 1em 0 0.5em;
   color: var(--primary);
   font-weight: 600;

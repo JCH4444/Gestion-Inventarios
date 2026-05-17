@@ -76,22 +76,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endif; ?>
 
       <form action="" method="POST">
-        <label for="documento">Documento *</label>
+        <label for="documento">Documento </label><label id="asterico">*</label>
         <input type="text" id="documento" name="documento_empleado" placeholder="Ej: 12345678" required/>
 
-        <label for="nombres">Nombres *</label>
+        <label for="nombres">Nombres </label><label id="asterico">*</label>
         <input type="text" id="nombres" name="nombres_empleado" placeholder="Ej: Juan" required/>
 
-        <label for="apellidos">Apellidos *</label>
+        <label for="apellidos">Apellidos </label><label id="asterico">*</label>
         <input type="text" id="apellidos" name="apellidos_empleado" placeholder="Ej: Pérez" required/>
 
-        <label for="correo">Correo *</label>
+        <label for="correo">Correo </label><label id="asterico">*</label>
         <input type="email" id="correo" name="correo_empleado" placeholder="Ej: juan@email.com" required/>
 
         <label for="telefono">Teléfono</label>
         <input type="text" id="telefono" name="telefono_empleado" placeholder="Ej: 3001234567"/>
 
-        <label for="password">Contraseña *</label>
+        <label for="password">Contraseña </label><label id="asterico">*</label>
         <input type="password" id="password" name="contra_empleado" placeholder="••••••••" required/>
 
         <button type="submit" class="btn-primary">Registrarse</button>
