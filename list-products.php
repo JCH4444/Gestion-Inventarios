@@ -40,7 +40,7 @@ try {
             <ul>
                 <li><a href="dashboard.php">🏠 Dashboard</a></li>
                 <li><a href="add-product.php">➕ Agregar producto</a></li>
-                <li><a href="list-products.php" class="actvie">📋 Listar productos</a></li>
+                <li><a href="list-products.php" class="active">📋 Listar productos</a></li>
                 <li><a href="add-provider.php">➕ Agregar proveedor</a></li>
                 <li><a href="list-providers.php">🏭📋Listar proveedores</a></li>
             </ul>
